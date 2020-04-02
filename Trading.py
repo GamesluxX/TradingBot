@@ -1,5 +1,6 @@
 import abc
 import Brokerage
+import Parser
 
 
 class TradingSystem(abc.ABC):
@@ -20,7 +21,7 @@ class TradingSystem(abc.ABC):
         pass
 
 
-class DAX(TradingSystem):
+class GermanStocks(TradingSystem):
     def __init__(self):
         super().__init__(Brokerage.AlpacaSocket(), 'DAX')
 

@@ -1,26 +1,16 @@
-from bs4 import BeautifulSoup
 import abc
 import requests
 import pandas as pd
-import lxml
 
 
 class TechnicalAnalysisParser:
     def __init__(self):
-        self.data_summary = {}
-        self.data = {}
+        self.data = None
         self.response = None
 
     @abc.abstractmethod
     def refresh_data(self):
         pass
-
-    @abc.abstractmethod
-    def system_loop(self):
-        pass
-
-    def start(self):
-        self.system_loop()
 
 
 class InvestComParser(TechnicalAnalysisParser):
@@ -44,7 +34,9 @@ class InvestComParser(TechnicalAnalysisParser):
         }
 
         self.response = requests.request("GET", url, headers=headers, data=payload)
-        self.data = pd.read_html(self.response.text,match="")[0]
+
+        self.data = pd.read_html(self.response.text, match="")[0]
+
         print(self.data.head(5))
 
 
@@ -57,10 +49,15 @@ class BoerseDeParser(TechnicalAnalysisParser):
 
         self.response = requests.request("GET", url, headers=headers, data=payload)
         self.data = pd.read_html(self.response.text, match="")[3]
+
+        # set column names with the last row values from boerse.de
         self.data.columns = self.data.tail(1).values[0]
+
+        # drop last two rows
+        self.data = self.data.drop(self.data.tail(2).index)
+
         print(self.data.head(5))
 
 
-
-#InvestComParser().refresh_data()
-BoerseDeParser().refresh_data()
+InvestComParser()
+BoerseDeParser()
