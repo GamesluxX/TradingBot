@@ -24,12 +24,3 @@ class AlphaVantage():
         self.stock_data, meta = self.ts.get_intraday(symbol=stock_symbol,interval='1min',outputsize='compact')
         print(self.stock_data)
 
-
-#AlphaVantage('SAP')
-
-# TODO remove
-alpaca = AlpacaSocket()
-alpaca.refresh_data()
-print(alpaca.brokerage_data)
-
-# model_data = alpaca.api.get_barset('DAX','minute',after='2020-01-01').df

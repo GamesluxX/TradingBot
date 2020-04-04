@@ -1,6 +1,7 @@
 import abc
 import requests
 import pandas as pd
+import io
 
 
 class TechnicalAnalysisParser:
@@ -58,6 +59,37 @@ class BoerseDeParser(TechnicalAnalysisParser):
 
         print(self.data.head(5))
 
+        return self.data
 
-InvestComParser()
-BoerseDeParser()
+
+class InvestComCSVParser(TechnicalAnalysisParser):
+    def refresh_data(self):
+        url = "https://www.investing.com/portfolio/service/Export?portfolio_id=10077675&exptype=csv"
+
+        payload = {}
+        headers = {
+            'Host': 'www.investing.com',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
+            'Sec-Fetch-Dest': 'document',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'Sec-Fetch-Site': 'same-origin',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-User': '?1',
+            'Referer': 'https://www.investing.com/portfolio/?portfolioID=OTU2bDJtNW8xYGtmZzY%3D',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Cookie': 'portfolioStateundefined=; portfolioStatecdc2af03901c7ee6e6a1f4bc9d20d905=9996712:open; G_AUTHUSER_H=0; adBlockerNewUserDomains=1585497092; _hjid=2b2d5daa-5005-4794-b7a2-5776f3f4b2b6; __gads=ID=a7acaf5d4f694515:T=1585497093:S=ALNI_MZ7CAbZcx6hKIGqwXAR-z7grvE1VQ; _ga=GA1.2.199549310.1585497094; G_ENABLED_IDPS=google; _fbp=fb.1.1585497097101.473260139; r_p_s_n=1; comment_notification_211113320=1; geoC=DE; gtmFired=OK; _gid=GA1.2.769838797.1585810371; notice_preferences=2:; TAconsentID=0e98cdc8-404a-4df0-8411-827662345788; notice_gdpr_prefs=0,1,2:; SKpbjs-unifiedid=%7B%22TDID%22%3A%2242f323e0-2ff0-49be-bd40-a05ddc0df8c7%22%2C%22TDID_LOOKUP%22%3A%22TRUE%22%2C%22TDID_CREATED_AT%22%3A%222020-03-02T06%3A52%3A57%22%7D; SKpbjs-unifiedid_last=Thu%2C%2002%20Apr%202020%2006%3A52%3A58%20GMT; SKpbjs-id5id=%7B%22ID5ID%22%3A%22ID5-ZHMO6IcC5_MUg0lE9YYCexUOUrZqNA_J4TKkj3O5Zw%22%2C%22ID5ID_CREATED_AT%22%3A%222020-01-07T14%3A49%3A51.896Z%22%2C%22ID5_CONSENT%22%3Atrue%2C%22CASCADE_NEEDED%22%3Afalse%2C%22ID5ID_LOOKUP%22%3Atrue%2C%223PIDS%22%3A%5B%5D%7D; SKpbjs-id5id_last=Thu%2C%2002%20Apr%202020%2006%3A52%3A58%20GMT; SideBlockUser=a%3A2%3A%7Bs%3A10%3A%22stack_size%22%3Ba%3A1%3A%7Bs%3A11%3A%22last_quotes%22%3Bi%3A8%3B%7Ds%3A6%3A%22stacks%22%3Ba%3A1%3A%7Bs%3A11%3A%22last_quotes%22%3Ba%3A7%3A%7Bi%3A0%3Ba%3A3%3A%7Bs%3A7%3A%22pair_ID%22%3Bs%3A3%3A%22172%22%3Bs%3A10%3A%22pair_title%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22pair_link%22%3Bs%3A19%3A%22%2Findices%2Fgermany-30%22%3B%7Di%3A1%3Ba%3A3%3A%7Bs%3A7%3A%22pair_ID%22%3Bs%3A4%3A%228826%22%3Bs%3A10%3A%22pair_title%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22pair_link%22%3Bs%3A27%3A%22%2Findices%2Fgermany-30-futures%22%3B%7Di%3A2%3Ba%3A3%3A%7Bs%3A7%3A%22pair_ID%22%3Bi%3A962987%3Bs%3A10%3A%22pair_title%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22pair_link%22%3Bs%3A29%3A%22%2Fequities%2Fmlp-exch%3Fcid%3D962987%22%3B%7Di%3A3%3Ba%3A3%3A%7Bs%3A7%3A%22pair_ID%22%3Bi%3A962814%3Bs%3A10%3A%22pair_title%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22pair_link%22%3Bs%3A42%3A%22%2Fequities%2Fcewe-color-holding-ag%3Fcid%3D962814%22%3B%7Di%3A4%3Ba%3A3%3A%7Bs%3A7%3A%22pair_ID%22%3Bs%3A3%3A%22652%22%3Bs%3A10%3A%22pair_title%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22pair_link%22%3Bs%3A23%3A%22%2Fequities%2Fbay-mot-werke%22%3B%7Di%3A5%3Ba%3A3%3A%7Bs%3A7%3A%22pair_ID%22%3Bi%3A29486%3Bs%3A10%3A%22pair_title%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22pair_link%22%3Bs%3A33%3A%22%2Fequities%2Fbay-mot-werke%3Fcid%3D29486%22%3B%7Di%3A6%3Ba%3A3%3A%7Bs%3A7%3A%22pair_ID%22%3Bs%3A3%3A%22656%22%3Bs%3A10%3A%22pair_title%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22pair_link%22%3Bs%3A20%3A%22%2Fequities%2Fdt-telekom%22%3B%7D%7D%7D%7D; PHPSESSID=6b2ore08fea8vcrk1svbajf80t; StickySession=id.50064279050.871_www.investing.com; prebid_page=0; prebid_session=0; notice_behavior=expressed,eu; nyxDorf=ZGhkMmIqMWRmMDooMGIwOzNgNnNmZ2dg; ses_id=ZCoyc2FuNj4xdWlvZzZmZWc3N21kYmBhYmBiY2NkZHJidj8xbzgxdzA%2FOXdubTIuYGA%2FbjQzO202Mm42MzFgNmRhMjNhMTY%2FMWVpbWdhZmdnMjc%2FZGpgNGI1YmBjNmQ8YjU%2FPG87MTIwYDllbmYyPWByPyM0cDsqNmRuPjNyYCdkazJzYTI2PzFvaWBnZmY2ZzY3OmRnYGNiNWI1YzVkfGIp; _gat_allSitesTracker=1',
+            'Cookie': 'PHPSESSID=umiei2npp8ji5vev96vlf743ag; StickySession=id.79197794862.764_www.investing.com; ses_id=Yy1iI2JtZm5kIDo8YTAxMmAwPmQyNDo7MTNvbjo9YXc3IzA%2BM2RjJTY5aiQ1NjQoMTI0PTUwZmAxNmVsNTEybmM3YjViNWYyZDc6ZGFkMWVgNj5gMjw6PzFibz86a2E4N2MwZjNnY282ZmplNWg0bDEjNCg1cWZ3MWNlNTV0MnVjbGIjYjFmb2Q6OjNhYDFgYDU%2BZDIzOjoxOW86OmhheTd8'
+        }
+
+        self.response = requests.request("GET", url, headers=headers, data=payload)
+        self.data = pd.read_csv(io.StringIO(self.response.content.decode('utf-8')))
+        print(self.data.head(5))
+
+        return self.data
+
+
+InvestComCSVParser().refresh_data()
+BoerseDeParser().refresh_data()
