@@ -46,6 +46,13 @@ class TradingSystem(abc.ABC):
                 is_ordered = True
         return is_ordered
 
+    def is_in_portfolio(self, stock_symbol):
+        is_position = False
+        for pos in self.current_positions:
+            if stock_symbol == pos.symbol:
+                is_position = True
+        return is_position
+
 
 class GermanStocks(TradingSystem):
     def __init__(self):
@@ -78,19 +85,18 @@ class GermanStocks(TradingSystem):
             time.sleep(1)
 
             # refresh data
-            self.insider_trades_data = Parser.BoerseDeParser().refresh_data()
+            #self.insider_trades_data = Parser.BoerseDeParser().refresh_data()
             self.stock_data = Parser.InvestComCSVParser().refresh_data()
-
-            print(self.api.list_orders())
 
             self.current_orders = self.api.list_orders()
             self.current_positions = self.api.list_positions()
 
-            # buy
             for index, el in self.stock_data.iterrows():
                 symbol = el['Symbol'].split('.')[0]
+
+                #buy
                 if el['5 Minutes'] == 'Strong Buy':
-                    if not self.is_ordered(symbol):
+                    if not self.is_ordered(symbol) and not self.is_in_portfolio(symbol):
                         price = el['Last']
 
                         qty = round(self.investment / price, 0) - 1
@@ -99,12 +105,11 @@ class GermanStocks(TradingSystem):
 
                         print('New order submitted: ' + str(qty) + ' x ' + symbol + " Price: " + str(price))
 
-            # sell
-            for index, el in self.stock_data.iterrows():
-                if el['5 Minutes'] != 'Strong Buy':
-                    if symbol in self.current_positions:
+                #sell
+                elif el['5 Minutes'] != 'Strong Buy':
+                    if self.is_in_portfolio(symbol):
                         self.close_position(symbol)
-                    elif symbol in self.current_orders:
+                    elif self.is_ordered(symbol):
                         self.cancel_order(symbol)
 
 
