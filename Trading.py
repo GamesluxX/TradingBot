@@ -60,18 +60,18 @@ class GermanStocks(TradingSystem):
         self.data = pd.read_csv("src\dow_jones_stock_symbols.csv")
         self.trading_loop()
 
-    def place_buy_order(self, order_symbol, qty):
+    def place_buy_order(self, stock_symbol, qty):
         self.api.submit_order(
-            symbol=order_symbol,
+            symbol=stock_symbol,
             qty=qty,
             side='buy',
             type='market',
             time_in_force='gtc'
         )
 
-    def place_sell_order(self, symbol, qty):
+    def place_sell_order(self, stock_symbol, qty):
         self.api.submit_order(
-            symbol=symbol,
+            symbol=stock_symbol,
             qty=qty,
             side='sell',
             type='market',
@@ -111,6 +111,4 @@ class GermanStocks(TradingSystem):
                         self.close_position(symbol)
                     elif self.is_ordered(symbol):
                         self.cancel_order(symbol)
-
-
 GermanStocks()

@@ -57,7 +57,7 @@ class BoerseDeParser(TechnicalAnalysisParser):
         # drop last two rows
         self.data = self.data.drop(self.data.tail(2).index)
 
-        print(self.data.head(5))
+        #print(self.data.head(5))
 
         return self.data
 
@@ -86,7 +86,7 @@ class InvestComCSVParser(TechnicalAnalysisParser):
 
         self.response = requests.request("GET", url, headers=headers, data=payload)
         self.data = pd.read_csv(io.StringIO(self.response.content.decode('utf-8')))
-        print(self.data.head(5))
+        #print(self.data.head(5))
 
         return self.data
 
