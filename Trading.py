@@ -35,11 +35,9 @@ class TradingSystem(abc.ABC):
                 print('Order cancelled: ' + order_symbol)
 
     def close_position(self, pos_symbol):
-        try:
-            self.api.close_position(pos_symbol)
-            print('Position closed: ' + pos_symbol)
-        except:
-            pass
+        for pos in self.current_positions:
+            if pos.symbol == pos_symbol:
+                print('Position closed: ' + pos_symbol + 'P/L: ' + str(pos.unrealized_plpc))
 
     def is_ordered(self, order_symbol):
         is_ordered = False
