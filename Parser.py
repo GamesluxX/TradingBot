@@ -7,6 +7,7 @@ import io
 class TechnicalAnalysisParser:
     def __init__(self):
         self.data = None
+        self.archive = None
         self.response = None
 
     @abc.abstractmethod
@@ -91,5 +92,5 @@ class InvestComCSVParser(TechnicalAnalysisParser):
         return self.data
 
 
-InvestComCSVParser().refresh_data()
-BoerseDeParser().refresh_data()
+InvestComCSVParser()
+BoerseDeParser()

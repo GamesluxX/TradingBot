@@ -3,6 +3,8 @@ import Brokerage
 import Parser
 import time
 import pandas as pd
+import datetime
+import os
 
 class TradingSystem(abc.ABC):
     def __init__(self, api, stock_symbol):
@@ -59,6 +61,7 @@ class GermanStocks(TradingSystem):
         super().__init__(Brokerage.AlpacaSocket(), 'DAX')
         self.data = pd.read_csv("src\dow_jones_stock_symbols.csv")
         self.trading_loop()
+        self.parser = Parser.InvestComCSVParser()
 
     def place_buy_order(self, stock_symbol, qty):
         self.api.submit_order(
@@ -79,14 +82,26 @@ class GermanStocks(TradingSystem):
         )
 
     def trading_loop(self):
-
+        count = 0
         while True:
+            count += 1
             # run every second
             time.sleep(1)
 
+            #store df in archive every 10sec
+            if count > 9:
+                count = 0
+
+                #if directory is not yet created, create.
+                if not os.path.exists("archive/" + str(datetime.date.today())):
+                    os.makedirs("archive/" + str(datetime.date.today()))
+
+                #safe current df with timestamp in respective directory
+                self.stock_data.to_csv(path_or_buf="archive/" + str(datetime.date.today()) + "/" + datetime.datetime.now().strftime("%H_%M_%S") + ".csv")
+
             # refresh data
             #self.insider_trades_data = Parser.BoerseDeParser().refresh_data()
-            self.stock_data = Parser.InvestComCSVParser().refresh_data()
+            self.stock_data = self.parser.refresh_data()
 
             self.current_orders = self.api.list_orders()
             self.current_positions = self.api.list_positions()
